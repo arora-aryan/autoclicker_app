@@ -22,9 +22,10 @@ To run this application, you need to have Python installed on your system along 
 
 ## Usage
 1. Start the application by running the Python script.
-2. The application window will open. Click on the desired locations on your screen to record the click pattern.
-3. Click on the "Done" button to execute the click pattern or "Reset" to clear the current pattern and start over.
-4. The application will minimize and start executing the click pattern after a brief delay.
+2. CD into the directory where the file is located and use "python3 autoclicker.py" to run the script
+3. The application window will open. Click on the desired locations on your screen to record the click pattern.
+4. Click on the "Done" button to execute the click pattern or "Reset" to clear the current pattern and start over.
+5. The application will minimize and start executing the click pattern after a brief delay.
 
 ## Precautions
 - **Supervision**: Always supervise the execution of the click pattern to avoid unintended clicks.
