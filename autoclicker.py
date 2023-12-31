@@ -1,11 +1,15 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget, QHBoxLayout
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPainter, QColor, QBrush, QFont
+from pynput import mouse
+import pyautogui
+import time
 
 class DrawingMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.dots = []
+        self.click_positions = []  # Store click positions
         self.initUI()
 
     def initUI(self):
@@ -16,9 +20,9 @@ class DrawingMainWindow(QMainWindow):
         container = QWidget()
         self.setCentralWidget(container)
         layout = QVBoxLayout(container)
-        
+
         self.showMaximized()
-        
+
         label = QLabel("Execute your click pattern", container)
         label.setAlignment(Qt.AlignCenter)
         label.setFont(QFont('Arial', 20))
@@ -34,7 +38,7 @@ class DrawingMainWindow(QMainWindow):
 
         done_button = QPushButton("Done", container)
         done_button.setFont(QFont('Arial', 16))
-        done_button.clicked.connect(self.showMinimized)
+        done_button.clicked.connect(self.executeClickPattern)
         button_layout.addWidget(done_button)
 
         layout.addLayout(button_layout)
@@ -43,6 +47,8 @@ class DrawingMainWindow(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.dots.append(event.pos())
             self.update()
+            mouse_position = pyautogui.position()
+            self.click_positions.append(mouse_position)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -53,15 +59,24 @@ class DrawingMainWindow(QMainWindow):
 
     def resetDrawing(self):
         self.dots = []
+        self.click_positions = []
         self.update()
+
+    def executeClickPattern(self):
+        self.showMinimized()  # Minimize the window
+        QTimer.singleShot(1000, self.move_mouse)  # Wait for 1000 ms (1 second) then execute move_mouse
+
+
+    def move_mouse(self):
+        time.sleep(3)  # Small delay to minimize the window before starting the clicks
+        for pos in self.click_positions:
+            pyautogui.moveTo(pos[0], pos[1])
+            pyautogui.click()
+            time.sleep(0.5)  # Adjust time delay as needed
+        print("Click pattern executed.")
 
 if __name__ == "__main__":
     app = QApplication([])
     main_window = DrawingMainWindow()
     main_window.show()
     app.exec_()
-
-#this is exactly how i want my window to function lol nice
-
-
-
