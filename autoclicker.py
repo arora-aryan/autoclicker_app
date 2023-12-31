@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QPushButton, QWidget, QHBoxLayout, QDoubleSpinBox, QSpinBox
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPainter, QColor, QBrush, QFont
 from pynput import mouse
@@ -27,6 +27,19 @@ class DrawingMainWindow(QMainWindow):
         label.setAlignment(Qt.AlignCenter)
         label.setFont(QFont('Arial', 20))
         layout.addWidget(label)
+
+        # DoubleSpinBox for setting click interval
+        self.click_interval_spinbox = QDoubleSpinBox(container)
+        self.click_interval_spinbox.setRange(0, 60)  # Set range from 0 to 60 seconds
+        self.click_interval_spinbox.setValue(0.5)    # Set default value to 0.5 seconds
+        self.click_interval_spinbox.setSingleStep(0.1) # Increment in steps of 0.1
+        layout.addWidget(self.click_interval_spinbox)
+
+        # SpinBox for setting number of repetitions
+        self.repeat_spinbox = QSpinBox(container)
+        self.repeat_spinbox.setRange(1, 100)  # Set range from 1 to 100 repetitions
+        self.repeat_spinbox.setValue(1)       # Set default value to 1 repetition
+        layout.addWidget(self.repeat_spinbox)
 
         # Button layout for "Done" and "Reset" buttons
         button_layout = QHBoxLayout()
@@ -64,15 +77,20 @@ class DrawingMainWindow(QMainWindow):
 
     def executeClickPattern(self):
         self.showMinimized()  # Minimize the window
-        QTimer.singleShot(1000, self.move_mouse)  # Wait for 1000 ms (1 second) then execute move_mouse
+        time.sleep(3)  # Small delay to minimize the window before starting the clicks
+        QTimer.singleShot(1000, self.startRepeatingClickPattern)  # Wait for 1000 ms (1 second) then execute startRepeatingClickPattern
 
+    def startRepeatingClickPattern(self):
+        repeat_count = self.repeat_spinbox.value()  # Get repetition count
+        for _ in range(repeat_count):
+            self.move_mouse()
 
     def move_mouse(self):
-        time.sleep(3)  # Small delay to minimize the window before starting the clicks
+        click_interval = self.click_interval_spinbox.value()  # Get value from spinbox
         for pos in self.click_positions:
             pyautogui.moveTo(pos[0], pos[1])
             pyautogui.click()
-            time.sleep(0.5)  # Adjust time delay as needed
+            time.sleep(click_interval)  # Use the user-defined click interval
         print("Click pattern executed.")
 
 if __name__ == "__main__":
