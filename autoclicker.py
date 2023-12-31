@@ -13,7 +13,7 @@ class DrawingMainWindow(QMainWindow):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle("Screen Filling Window")
+        self.setWindowTitle("Autoclicker")
         self.setGeometry(100, 100, 800, 600)
         self.setWindowOpacity(0.50)
 
